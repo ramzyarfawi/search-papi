@@ -1,0 +1,71 @@
+name: Build and Deploy to Develop
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout this repo
+      uses: actions/checkout@v3
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: 8
+    - name: Create Maven settings.xml
+      uses: whelk-io/maven-settings-xml-action@v5
+      with: 
+        servers: '[{"id": "anypoint-exchange-v3", "username":"~~~Client~~~", "password":"8f29fed241c84c249d9c02b65c29c255~?~68cd59DF9D9B40A3AF69329d4D2aDE42"}, {"id": "non-production-automated-deployment", "username":"~~~Client~~~", "password":"6be4b9be43b048fca8667232fdf2cfdf~?~3Bd2C333b29543BC9a796336857a8A91"}]'
+        repositories: '[{"id": "mule-releases-ee-repository" , "url": "https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/"}, {"id":"mule-public-repository", "url":"https://repository.mulesoft.org/nexus/content/repositories/public"}]'
+    - run: |
+        cat ~/.m2/settings.xml
+
+    - name: Build with Maven
+      run: mvn clean deploy
+        
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:    
+    - name: Checkout this repo
+      uses: actions/checkout@v3
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Create Maven settings.xml
+      uses: whelk-io/maven-settings-xml-action@v5
+      with: 
+        servers: '[{"id": "anypoint-exchange-v3", "username":"~~~Client~~~", "password":"8f29fed241c84c249d9c02b65c29c255~?~68cd59DF9D9B40A3AF69329d4D2aDE42"}, {"id": "non-production-automated-deployment", "username":"~~~Client~~~", "password":"6be4b9be43b048fca8667232fdf2cfdf~?~3Bd2C333b29543BC9a796336857a8A91"}]'
+        repositories: '[{"id": "mule-releases-ee-repository" , "url": "https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/"}, {"id":"mule-public-repository", "url":"https://repository.mulesoft.org/nexus/content/repositories/public"}]'
+    - run: |
+        cat ~/.m2/settings.xml
+    - name: Deploy to Developpement
+      run: |
+        artifactName=$(ls *.jar | head -1)
+        mvn clean deploy -DmuleDeploy \
+         -Dtarget=Cloudhub-US-East-2 \
+         -DmuleVersion=4.6.0 \
+         -Denvironment=Developpement \
+         -DapplicationName=sms-sapi-dev \
+         -Denv=dev \
+         -DdefaultURL=true \
+         -Dconfig.key="s@lesforce!nterv" \
+         -Danypoint.platform.client_id=2c8fa98e2c164501b47c83a6fa870af1 \
+         -Danypoint.platform.client_secret=CE763Fd9fBf44580Ac09f8837c7a69FF \
+         -Dserver=non-production-automated-deployment
