@@ -15,7 +15,10 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="33ace5bf-6897-4e59-a720-5eaaff128580" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
-	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="0c84d72c-05dc-4e32-8016-1561f2c3b9f2" basePath="/${books-sapi.base-path}">
+	<http:request-config name="HTTP_Request_configuration_books-sapi" doc:name="HTTP Request configuration" doc:id="0c84d72c-05dc-4e32-8016-1561f2c3b9f2" basePath="/${books-sapi.base-path}">
 		<http:request-connection protocol="HTTPS" host="${books-sapi.host}" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_amazons3" doc:name="HTTP Request configuration" doc:id="df052b3a-bc1d-4e58-8cf5-8cb160887fb2" basePath="/${amazon-s3-sapi.base-path}">
+		<http:request-connection protocol="HTTPS" host="${amazon-s3-sapi.host}" />
 	</http:request-config>
 </mule>

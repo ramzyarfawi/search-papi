@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<flow name="searchBooksFlow" doc:id="4b56d7fb-eaf6-40ab-a6a2-6a3d2d719296" >
 		<logger level="INFO" doc:name="Logger" doc:id="ceb5376a-207f-4119-8d4c-d9e4de72eb50" />
-		<http:request method="GET" doc:name="Request" doc:id="f6f92251-1414-4d11-8c12-366b83a31fa3" config-ref="HTTP_Request_configuration" path="/${books-sapi.request_path}">
+		<http:request method="GET" doc:name="Request" doc:id="f6f92251-1414-4d11-8c12-366b83a31fa3" config-ref="HTTP_Request_configuration_books-sapi" path="/${books-sapi.request_path}">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -18,5 +18,25 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 }]]]></http:headers>
 		</http:request>
 		<logger level="INFO" doc:name="Logger" doc:id="7fe31159-cdc5-4587-afac-d158630dec39" />
+	</flow>
+	<flow name="archive-s3-Flow" doc:id="f40e4f5a-def1-4743-ba9e-02ed99dd8812" >
+		<logger level="INFO" doc:name="Logger" doc:id="922469c0-9b66-494c-b0a5-e30babe34977" />
+		<ee:transform doc:name="Transform Message" doc:id="20f0ee24-3623-4722-ac75-5f295b798688" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="GET" doc:name="Request" doc:id="acca2fc1-20bd-40ab-93df-ea9fe1b23a9e" config-ref="HTTP_Request_configuration_books-sapi" path="/${amazon-s3-sapi.request_path}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : p('amazon-s3-sapi.client_secret'),
+	"client_id" : p('amazon-s3-sapi.client_id')
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="5de58c22-5d50-433e-80a9-7642c54be1ce" />
 	</flow>
 </mule>

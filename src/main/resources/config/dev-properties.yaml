@@ -7,3 +7,10 @@ books-sapi:
   request_path: "books"
   client_id: "fd522f8bc96d4eaf84c9b63cea7061df"
   client_secret: "9624903EC63b4c9ABa2B77542632795a"
+
+amazon-s3-sapi:
+  host: "books-sapi-a0y7fb.5sc6y6-4.usa-e2.cloudhub.io"
+  base-path: "api"
+  request_path: "books"
+  client_id: "fd522f8bc96d4eaf84c9b63cea7061df"
+  client_secret: "9624903EC63b4c9ABa2B77542632795a"
