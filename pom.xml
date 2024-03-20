@@ -4,7 +4,7 @@
 
 	<groupId>2fdf0f92-7894-4d64-934e-2c509ced85d5</groupId>
 	<artifactId>search-papi</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<packaging>mule-application</packaging>
 
 	<name>search-papi</name>
