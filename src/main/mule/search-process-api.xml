@@ -124,13 +124,6 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\health:search-process-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-"Application is up!" as String {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="cce74685-4644-4207-8bfe-cf02842233ac" name="healthFlow"/>
     </flow>
 </mule>
