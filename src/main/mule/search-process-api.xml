@@ -3,7 +3,7 @@
     <http:listener-config name="search-process-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="search-process-api-config" api="resource::2fdf0f92-7894-4d64-934e-2c509ced85d5:search-process-api:1.0.1:raml:zip:search-process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="search-process-api-config" api="resource::2fdf0f92-7894-4d64-934e-2c509ced85d5:search-process-api:1.0.3:raml:zip:search-process-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="search-process-api-main">
         <http:listener config-ref="search-process-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -124,6 +124,35 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\health:search-process-api-config">
-		<flow-ref doc:name="Flow Reference" doc:id="cce74685-4644-4207-8bfe-cf02842233ac" name="healthFlow"/>
+        <flow-ref doc:name="Flow Reference" doc:id="cce74685-4644-4207-8bfe-cf02842233ac" name="healthFlow" />
+    </flow>
+    <flow name="post:\search:application\json:search-process-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    ID: 1,
+    title: "Al Muquadimah",
+    author: "IBN Khaldoun",
+    price: 65
+  }, 
+  {
+    ID: 2,
+    title: "Al Tafsir",
+    author: "IBN Arafa",
+    price: 45
+  }, 
+  {
+    ID: 3,
+    title: "Harakat",
+    author: "Mustafa Fersi",
+    price: 30
+  }
+] as Array {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
     </flow>
 </mule>
